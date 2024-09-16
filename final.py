@@ -31,9 +31,10 @@ cv2.resizeWindow(window_name, img.shape[1], img.shape[0])
 
 cv2.namedWindow("Parameters", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("Parameters", 640, 240)
-cv2.createTrackbar("Threshold1", "Parameters", 174, 255, empty)
-cv2.createTrackbar("Threshold2", "Parameters", 45, 255, empty)
-cv2.createTrackbar("Area", "Parameters", 5000, 100000, empty)
+cv2.createTrackbar("Threshold1", "Parameters", 174, 255, empty) # this is canny algorithm first param
+cv2.createTrackbar("Threshold2", "Parameters", 45, 255, empty) # this is canny algorithm second param
+cv2.createTrackbar("MinArea", "Parameters", 5000, 100000, empty)
+cv2.createTrackbar("MaxArea", "Parameters", 50000, 100000, empty)
 
 def color_quantization(image, k):
     data = np.float32(image).reshape((-1, 3))
@@ -63,8 +64,9 @@ def getContours(img, imgContour):
     for cnt, cn in zip(contours, conts):
         area = cv2.contourArea(cn)
         area_in_cm2 = cal_area(area, args.distance)
-        areaMin = cv2.getTrackbarPos("Area", "Parameters")
-        if area > areaMin:
+        areaMin = cv2.getTrackbarPos("MinArea", "Parameters")
+        areaMax = cv2.getTrackbarPos("MaxArea", "Parameters")
+        if area > areaMin and area < areaMax:
             cv2.drawContours(imgContour, cnt, -1, (255, 0, 255), 4)
             peri = cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
